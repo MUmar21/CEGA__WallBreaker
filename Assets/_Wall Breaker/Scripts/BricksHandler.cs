@@ -28,7 +28,6 @@ public class BricksHandler : MonoBehaviour, IClickable
     public Action<BricksHandler> brickDetachAction;
     public static Action AddScoreEvent;
 
-    [SerializeField] private GameObject vfx;
     private void OnEnable()
     {
         brickDetachAction += OnBrickDetached;
@@ -52,7 +51,6 @@ public class BricksHandler : MonoBehaviour, IClickable
 
         ApplyImpactToNearby(impactPoint);
 
-        GameObject ve = Instantiate(vfx, transform.position, Quaternion.identity);
     }
 
     void DetachBrick(Vector3 impactPoint)
