@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class BrickWallGenerator : MonoBehaviour
@@ -12,12 +13,15 @@ public class BrickWallGenerator : MonoBehaviour
     [SerializeField] private WallPattern[] availablePatterns;
 
     [SerializeField] private GameObject brickPrefab;
+    [SerializeField] private GameObject clearEffect;
     [SerializeField] private int rows = 8;
     [SerializeField] private int columns = 10;
 
     [SerializeField] private float brickWidth = 2f;
     [SerializeField] private float brickHeight = 1f;
     [SerializeField] private float space = 0.05f;
+    [SerializeField] private float nextWallDelay = 5f;
+    [SerializeField] private float levelTransitionPosZ = 50f;
 
     public List<BricksHandler> bricksRecord = new List<BricksHandler>();
 
@@ -166,15 +170,40 @@ public class BrickWallGenerator : MonoBehaviour
 
     private IEnumerator NextPhase()
     {
-        yield return new WaitForSeconds(2f);
+        clearEffect.gameObject.SetActive(true);
+        CameraShake.Instance.Shake(duration: 0.5f, magnitude: 0.1f);
+        ScreenFlash.Instance.Flash(color: Color.aliceBlue, duration: 0.5f);
+        OnWallDestroyed?.Invoke();
+
+        yield return new WaitForSeconds(nextWallDelay);
+        
+        clearEffect.gameObject.SetActive(false);
+
+        Vector3 newPos = transform.position + Vector3.forward * levelTransitionPosZ;
+        transform.position = newPos;
 
         currentPattern = GetRandomPattern();
 
         if (columns < 13) columns += 2;
         if (rows < 10) rows += 2;
 
-        OnWallDestroyed?.Invoke();
-        GenerateWall();
+        TransitionCamera();
+    }
+
+    private void TransitionCamera()
+    {
+        Camera camera = Camera.main;
+        Vector3 targetPos = new Vector3(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z + levelTransitionPosZ);
+
+        camera.transform.DOMove(
+            targetPos,
+            2f
+            )
+            .SetEase(Ease.InQuad)
+            .OnComplete(() =>
+            {
+                GenerateWall();
+            });
     }
 
     private WallPattern GetRandomPattern()

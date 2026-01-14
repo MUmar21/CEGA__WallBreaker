@@ -159,7 +159,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 64
-  destroyDelay: 4
+  destroyDelay: 6
   rb: {fileID: 0}
   isDetached: 0
   unityEvent:

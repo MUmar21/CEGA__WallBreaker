@@ -43,6 +43,15 @@ public class BricksHandler : MonoBehaviour, IClickable
         rb = GetComponent<Rigidbody>();
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            CameraShake.Instance.Shake(duration: 0.03f, magnitude: 0.05f);
+            HitStop.Instance.Freeze(duration: 0.03f);
+        }
+    }
+
     public void OnClicked(Vector3 impactPoint)
     {
         if (isDetached) return; // Already falling
@@ -51,6 +60,9 @@ public class BricksHandler : MonoBehaviour, IClickable
 
         ApplyImpactToNearby(impactPoint);
 
+        CameraShake.Instance.Shake(duration: 0.1f, magnitude: 0.05f);
+        HitStop.Instance.Freeze(duration: 0.1f);
+        ScreenFlash.Instance.Flash(color: Color.softRed, duration: 0.3f);
     }
 
     void DetachBrick(Vector3 impactPoint)

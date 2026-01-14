@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,6 +12,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private TMP_Text countdownText;
     [SerializeField] private TMP_Text highScoreText;
+    [SerializeField] private TMP_Text levelCompleteText;
 
     [Header("Menus Ref")]
     [SerializeField] private GameObject startMenu;
@@ -61,6 +63,11 @@ public class UIManager : MonoBehaviour
         deleteDataButton.onClick.RemoveListener(DeleteGameData);
         nextButton.onClick.RemoveListener(OnNextButton);
         pauseButton.onClick.AddListener(OnPause);
+
+        if (punchScaleCoroutine != null)
+        {
+            StopCoroutine(punchScaleCoroutine);
+        }
     }
 
     private void OnGameStateChanged(GameStates newGameState)
@@ -176,17 +183,45 @@ public class UIManager : MonoBehaviour
         countdownText.gameObject.SetActive(false);
     }
 
+    private Coroutine punchScaleCoroutine;
+
     public void UpdateScoreUI(int newScore)
     {
         if (scoreText != null)
         {
             scoreText.text = $"Score: {newScore}";
+            //if (punchScaleCoroutine != null)
+            //{
+            //    StopCoroutine(punchScaleCoroutine);
+            //}
+            //punchScaleCoroutine = StartCoroutine(PunchScale(scoreText.transform));
+
+            //Vector3 originalScale = scoreText.transform.localScale;
+            //scoreText.gameObject.transform.DOPunchScale(originalScale * 0.2f, 0.1f)
+            //    .OnComplete(() =>
+            //    {
+            //        scoreText.gameObject.transform.localScale = originalScale;
+            //    });
+
+            PopAnim(scoreText.gameObject.transform, 1.2f, 0.5f);
         }
     }
 
-    public void UpdateTimerUI(int seconds)
+    public void UpdateTimerUI(int seconds, bool playAnim = false)
     {
         timerText.text = FormatedTimer(seconds);
+        if(playAnim)
+            PopAnim(timerText.gameObject.transform, 1.2f, 0.5f);
+    }
+
+    public void OnLevelComplete()
+    {
+        levelCompleteText.gameObject.SetActive(true);
+
+        Vector3 originalScale = levelCompleteText.transform.localScale;
+
+
+        PopAnim(levelCompleteText.gameObject.transform, 1.5f, 1f, true);
     }
 
     public void UpdateHighscoreText(int score)
@@ -202,4 +237,47 @@ public class UIManager : MonoBehaviour
         return $"Timer: {mins}:{secs}";
     }
 
+    private void PopAnim(Transform target, float scaleTargetVal, float duration, bool shouldDeactivate = false)
+    {
+        Sequence sequence = DOTween.Sequence();
+        Vector3 originalScale = target.localScale;
+
+        sequence.Append(target.DOScale(scaleTargetVal, duration).SetEase(Ease.OutBounce));
+        sequence.Append(target.DOScale(originalScale, 0.5f).SetEase(Ease.OutBounce)
+            .OnComplete(() =>
+            {
+                if (shouldDeactivate)
+                    target.gameObject.SetActive(false);
+            }));
+
+        sequence.Play();
+    }
+
+    //private IEnumerator PunchScale(Transform target)
+    //{
+    //    Vector3 originalScale = Vector3.one;
+
+    //    float elapsed = 0f;
+    //    float duration = 0.15f;
+    //    Vector3 scale = originalScale * 1.3f;
+    //    target.localScale = scale;
+
+    //    while (elapsed < duration)
+    //    {
+    //        float x = scale.x - Time.unscaledDeltaTime;
+    //        float y = scale.y - Time.unscaledDeltaTime;
+
+    //        scale = new Vector3(x, y, 0);
+
+    //        if (scale.x > 1f && scale.y > 1f)
+    //        {
+    //            target.localScale = scale;
+    //        }
+
+    //        elapsed += Time.unscaledDeltaTime;
+    //        yield return null;
+    //    }
+
+    //    target.localScale = Vector3.one;
+    //}
 }

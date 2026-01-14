@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         BricksHandler.AddScoreEvent += AddScore;
-        BrickWallGenerator.OnWallDestroyed += AddBonus;
+        BrickWallGenerator.OnWallDestroyed += LevelComplete;
     }
 
     public void ChangeState(GameStates newState)
@@ -207,11 +207,18 @@ public class GameManager : MonoBehaviour
         return highScore;
     }
 
+    private void LevelComplete()
+    {
+        AddBonus();
+        uiManager.OnLevelComplete();
+    }
+    
     private void AddBonus()
     {
         remaingTime += timeBonusToAdd;
-        uiManager.UpdateTimerUI(remaingTime);
+        uiManager.UpdateTimerUI(remaingTime, true);
     }
+
 
     private void OnDisable()
     {
@@ -223,6 +230,6 @@ public class GameManager : MonoBehaviour
         StopAllCoroutines();
 
         BricksHandler.AddScoreEvent -= AddScore;
-        BrickWallGenerator.OnWallDestroyed -= AddBonus;
+        BrickWallGenerator.OnWallDestroyed -= LevelComplete;
     }
 }
