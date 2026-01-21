@@ -93,6 +93,7 @@ public class SoundManager : MonoBehaviour
 
         brickAS.pitch = Random.Range(0.9f, 1.1f);
         //audioSource.clip = clipToPlay;
+        buttonAS.Stop();
         brickAS.PlayOneShot(clipToPlay);
         brickAS.pitch = 1f;  // Reset
 
@@ -101,6 +102,8 @@ public class SoundManager : MonoBehaviour
 
     public void PlayButtonAudio()
     {
+        brickAS.Stop();
+        buttonAS.Stop();
         buttonAS.PlayOneShot(buttonClip);
         Debug.Log($"<color=yellow> Playing Button Audio </color>");
     }

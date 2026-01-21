@@ -212,7 +212,7 @@ public class GameManager : MonoBehaviour
         AddBonus();
         uiManager.OnLevelComplete();
     }
-    
+
     private void AddBonus()
     {
         remaingTime += timeBonusToAdd;
@@ -231,5 +231,10 @@ public class GameManager : MonoBehaviour
 
         BricksHandler.AddScoreEvent -= AddScore;
         BrickWallGenerator.OnWallDestroyed -= LevelComplete;
+    }
+
+    public void ApplicationQuit()
+    {
+        Application.Quit();
     }
 }

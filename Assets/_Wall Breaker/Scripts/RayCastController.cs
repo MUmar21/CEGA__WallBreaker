@@ -1,9 +1,12 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class RayCastController : MonoBehaviour
 {
     [SerializeField] private GameObject explosionVFX;
+    [SerializeField] private ObjectPool impactVfxPool;
+    [SerializeField] private LayerMask layerMask;
     private Camera playerCamera;
     private InputAction inputAction;
 
@@ -53,15 +56,19 @@ public class RayCastController : MonoBehaviour
 
         Ray ray = playerCamera.ScreenPointToRay(mousePos);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, LayerMask.GetMask("Bricks")))
+        if (Physics.Raycast(ray, out RaycastHit hit, layerMask))
         {
             //Debug.Log("Raycast Hit: " + hit.collider.name);
             Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.green, 5f);
 
             Vector3 hitPoint = hit.point;
-            GameObject vfxObj = Instantiate(explosionVFX, hitPoint, Quaternion.identity);
+            //GameObject vfxObj = Instantiate(explosionVFX, hitPoint, Quaternion.identity);
 
-            Destroy(vfxObj, 4f);
+            //Destroy(vfxObj, 4f);
+
+            GameObject vfxObj = impactVfxPool.Get();
+            vfxObj.transform.position = hitPoint;
+            StartCoroutine(ReturnToPool(vfxObj));
 
             IClickable brick = hit.collider.GetComponent<IClickable>();
             if (brick != null)
@@ -70,6 +77,11 @@ public class RayCastController : MonoBehaviour
                 brick.OnClicked(hit.point);
             }
         }
+    }
 
+    private IEnumerator ReturnToPool(GameObject obj)
+    {
+        yield return new WaitForSeconds(4f);
+        impactVfxPool.Return(obj);
     }
 }

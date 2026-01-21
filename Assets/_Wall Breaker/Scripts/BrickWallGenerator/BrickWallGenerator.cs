@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 
@@ -33,6 +34,8 @@ public class BrickWallGenerator : MonoBehaviour
     private void OnEnable()
     {
         BricksHandler.OnDetached += RemoveDetachedBricks;
+
+        var rigidbody = bricksRecord.First(record => record.isDetached == true).rb;
     }
 
     private void OnDisable()
@@ -176,7 +179,7 @@ public class BrickWallGenerator : MonoBehaviour
         OnWallDestroyed?.Invoke();
 
         yield return new WaitForSeconds(nextWallDelay);
-        
+
         clearEffect.gameObject.SetActive(false);
 
         Vector3 newPos = transform.position + Vector3.forward * levelTransitionPosZ;
