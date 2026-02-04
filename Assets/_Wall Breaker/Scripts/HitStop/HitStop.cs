@@ -15,11 +15,12 @@ public class HitStop : MonoBehaviour
     {
         if (unfreezeCoroutine != null)
         {
-            StopCoroutine(unfreezeCoroutine);
-            Time.timeScale = 1f;
+            //Time.timeScale = 1f;
+            //StopCoroutine(unfreezeCoroutine);
+            return;
         }
 
-        Time.timeScale = 0f;
+        Time.timeScale = 0.5f;
         unfreezeCoroutine = StartCoroutine(UnFreeze(duration));
     }
 
@@ -27,6 +28,7 @@ public class HitStop : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(duration);
         Time.timeScale = 1f;
+        unfreezeCoroutine = null;
     }
 
     private void OnDisable()

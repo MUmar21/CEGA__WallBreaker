@@ -67,14 +67,14 @@ public class SoundManager : MonoBehaviour
             case GameStates.MainMenu:
                 bgThemeAS.clip = mainMenuBG;
                 bgThemeAS.Play();
-                Debug.Log($"<color=red>Playing audio clip main menu</color>");
+                Debug.Log($"<color=blue>Playing audio clip main menu</color>");
                 break;
             case GameStates.TimerMenu:
                 break;
             case GameStates.Playing:
                 bgThemeAS.clip = gameplayBG;
                 bgThemeAS.Play();
-                Debug.Log($"<color=red>Playing audio clip gameplay</color>");
+                Debug.Log($"<color=blue>Playing audio clip gameplay</color>");
                 break;
             case GameStates.Pause:
                 bgThemeAS.Pause();

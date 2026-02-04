@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
 
 public class RayCastController : MonoBehaviour
@@ -7,6 +8,7 @@ public class RayCastController : MonoBehaviour
     [SerializeField] private GameObject explosionVFX;
     [SerializeField] private ObjectPool impactVfxPool;
     [SerializeField] private LayerMask layerMask;
+    [SerializeField] private NavMeshAgent playerAgent;
     private Camera playerCamera;
     private InputAction inputAction;
 
@@ -58,10 +60,17 @@ public class RayCastController : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, layerMask))
         {
-            //Debug.Log("Raycast Hit: " + hit.collider.name);
+            Debug.Log("Raycast Hit: " + hit.collider.name);
             Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.green, 5f);
 
             Vector3 hitPoint = hit.point;
+
+            if (playerAgent != null)
+            {
+                playerAgent.SetDestination(hitPoint);
+                Debug.Log("Moving agent to destination");
+            }
+
             //GameObject vfxObj = Instantiate(explosionVFX, hitPoint, Quaternion.identity);
 
             //Destroy(vfxObj, 4f);

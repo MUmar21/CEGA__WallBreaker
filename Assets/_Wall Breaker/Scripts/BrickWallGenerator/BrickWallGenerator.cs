@@ -34,8 +34,6 @@ public class BrickWallGenerator : MonoBehaviour
     private void OnEnable()
     {
         BricksHandler.OnDetached += RemoveDetachedBricks;
-
-        var rigidbody = bricksRecord.First(record => record.isDetached == true).rb;
     }
 
     private void OnDisable()

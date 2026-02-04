@@ -48,7 +48,7 @@ public class BricksHandler : MonoBehaviour, IClickable
         if (collision.gameObject.CompareTag("Ground"))
         {
             CameraShake.Instance.Shake(duration: 0.03f, magnitude: 0.05f);
-            HitStop.Instance.Freeze(duration: 0.03f);
+            //HitStop.Instance.Freeze(duration: 0.03f);
         }
     }
 

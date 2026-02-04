@@ -1,4 +1,4 @@
-using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,30 +13,25 @@ public class ScreenFlash : MonoBehaviour
     {
         Instance = this;
         originalColor = flashImage.color;
+        flashImage.gameObject.SetActive(false);
     }
 
     public void Flash(Color color, float duration)
     {
-        StartCoroutine(FlashCoroutine(color, duration));
-    }
+        flashImage.DOKill();
 
-    private IEnumerator FlashCoroutine(Color color, float duration)
-    {
-        float elapsed = 0;
-        flashImage.color = color;
+        float startAlpha = 0.8f;
+        Color startColor = new Color(color.r, color.g, color.b, startAlpha);
+
+        flashImage.color = startColor;
         flashImage.gameObject.SetActive(true);
 
-        while (elapsed < duration)
-        {
-            float alpha = 0.8f - (elapsed / duration);
-
-            flashImage.color = new Color(color.r, color.g, color.b, alpha);
-
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        flashImage.color = originalColor;
-        flashImage.gameObject.SetActive(false);
+        flashImage.DOFade(0f, duration)
+            .SetEase(Ease.Linear)
+            .OnComplete(() =>
+            {
+                flashImage.color = originalColor;
+                flashImage.gameObject.SetActive(false);
+            });
     }
 }
